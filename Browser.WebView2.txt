@@ -1,0 +1,64 @@
+﻿using System;
+using System.Diagnostics;
+using System.Windows.Forms;
+
+namespace mdock;
+
+internal class Browser: Microsoft.Web.WebView2.WinForms.WebView2
+{
+    private bool initialized = false;
+    private string requestedHtml = null;
+    //private string currentHtml = null;
+    static Browser()
+    {
+    }
+    public Browser()
+    {
+        this.Source = new Uri("about:blank");
+        this.NavigationCompleted += (s, e) =>
+        {
+            if (this.CoreWebView2 != null)
+            {
+                if (this.initialized) return;
+                this.initialized = true;
+                this.CoreWebView2.NewWindowRequested += (s, e) =>
+                {
+                    if (e.NewWindow != null)
+                    {
+                        e.NewWindow.Stop();
+                        //MessageBox.Show("ポップアップを抑止しました");
+                    }
+                    else
+                    {
+                        //ダミーのCoreWebView2を読み込ませてポップアップを抑止する
+                        //e.NewWindow = new Microsoft.Web.WebView2.Core.CoreWebView2();
+                        //↑ちなみに、これはできない
+                        e.NewWindow = DummyWebView.CoreWebView2;
+                        e.NewWindow.Stop();
+
+                        //これでJavaScriptが実行できる
+                        //this.browser.ExecuteScriptAsync("alert(\"ポップアップを抑止しました\");");
+                        string url = e.Uri.ToString();
+                        Process.Start(url);
+                    }
+                };
+                if (this.requestedHtml != null)
+                {
+                    this.CoreWebView2.NavigateToString(this.requestedHtml);
+                }
+            }
+        };
+    }
+
+    public void LoadHtml(string html)
+    {
+        this.requestedHtml = html;
+        if (!this.initialized) return;
+        this.CoreWebView2.NavigateToString(html);
+    }
+
+    private Microsoft.Web.WebView2.WinForms.WebView2 DummyWebView = new Microsoft.Web.WebView2.WinForms.WebView2
+    {
+        Source = new Uri("about:blank"),
+    };
+}
