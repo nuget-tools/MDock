@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace mdock;
 
-internal class Browser: Microsoft.Web.WebView2.WinForms.WebView2
+internal class Browser : Microsoft.Web.WebView2.WinForms.WebView2
 {
     private bool initialized = false;
     private string requestedHtml = null;
@@ -55,6 +55,12 @@ internal class Browser: Microsoft.Web.WebView2.WinForms.WebView2
         this.requestedHtml = html;
         if (!this.initialized) return;
         this.CoreWebView2.NavigateToString(html);
+    }
+
+    public void Unload()
+    {
+        if (!this.initialized) return;
+        this.CoreWebView2.Navigate("about:blank");
     }
 
     private Microsoft.Web.WebView2.WinForms.WebView2 DummyWebView = new Microsoft.Web.WebView2.WinForms.WebView2

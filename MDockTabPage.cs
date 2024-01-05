@@ -1,5 +1,4 @@
-﻿//using CefSharp;
-using Global;
+﻿using Global;
 using Markdig;
 using Markdig.Renderers;
 using Markdig.Syntax.Inlines;
@@ -13,8 +12,6 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Media;
-using CefSharp;
-//using CefSharp;
 
 namespace mdock;
 

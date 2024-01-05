@@ -1,165 +1,70 @@
-﻿using CefSharp;
-using CefSharp.WinForms;
-using System;
+﻿using System;
 using System.Diagnostics;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
+using System.Windows.Forms;
 
 namespace mdock;
 
-internal class Browser: ChromiumWebBrowser
+internal class Browser : Microsoft.Web.WebView2.WinForms.WebView2
 {
+    private bool initialized = false;
+    private string requestedHtml = null;
+    //private string currentHtml = null;
     static Browser()
     {
-        string cacheDir =
-            Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)
-            + "\\.javacommons\\.formbrowser";
-        Directory.CreateDirectory(cacheDir);
-        // Initialize cef with the provided settings
-        CefSettings settings = new CefSettings();
-        settings.Locale = "ja";
-        settings.AcceptLanguageList = "ja-JP";
-        //settings.CachePath = cacheDir;
-        settings.CachePath = null; // in-memory mode
-        settings.PersistSessionCookies = true;
-        settings.LogSeverity = LogSeverity.Disable;
-        Cef.Initialize(settings);
     }
     public Browser()
     {
-        this.LifeSpanHandler = new MyHandler();
-        this.RequestHandler = new MyRequestHandler();
-        //this.Load("about:blank");
+        this.Source = new Uri("about:blank");
+        this.NavigationCompleted += (s, e) =>
+        {
+            if (this.CoreWebView2 != null)
+            {
+                if (this.initialized) return;
+                this.initialized = true;
+                this.CoreWebView2.NewWindowRequested += (s, e) =>
+                {
+                    if (e.NewWindow != null)
+                    {
+                        e.NewWindow.Stop();
+                        //MessageBox.Show("ポップアップを抑止しました");
+                    }
+                    else
+                    {
+                        //ダミーのCoreWebView2を読み込ませてポップアップを抑止する
+                        //e.NewWindow = new Microsoft.Web.WebView2.Core.CoreWebView2();
+                        //↑ちなみに、これはできない
+                        e.NewWindow = DummyWebView.CoreWebView2;
+                        e.NewWindow.Stop();
+
+                        //これでJavaScriptが実行できる
+                        //this.browser.ExecuteScriptAsync("alert(\"ポップアップを抑止しました\");");
+                        string url = e.Uri.ToString();
+                        Process.Start(url);
+                    }
+                };
+                if (this.requestedHtml != null)
+                {
+                    this.CoreWebView2.NavigateToString(this.requestedHtml);
+                }
+            }
+        };
     }
+
+    public void LoadHtml(string html)
+    {
+        this.requestedHtml = html;
+        if (!this.initialized) return;
+        this.CoreWebView2.NavigateToString(html);
+    }
+
     public void Unload()
     {
-        this.Load("about:blank");
+        if (!this.initialized) return;
+        this.CoreWebView2.Navigate("about:blank");
     }
-}
 
-public class MyRequestHandler : IRequestHandler
-{
-    bool IRequestHandler.OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)
+    private Microsoft.Web.WebView2.WinForms.WebView2 DummyWebView = new Microsoft.Web.WebView2.WinForms.WebView2
     {
-        if (frame.Name == "")
-        {
-            return false;
-        }
-#if false
-        if (request.Url.StartsWith("https://www.youtube.com/embed/"))
-        {
-            return false;
-        }
-#endif
-        // Open in Default browser
-        if (request.Url.StartsWith("http:") || request.Url.StartsWith("https:"))
-        {
-            Process.Start(request.Url);
-            return true;
-        }
-        return false;
-    }
-
-
-    void IRequestHandler.OnDocumentAvailableInMainFrame(IWebBrowser chromiumWebBrowser, IBrowser browser)
-    {
-
-    }
-
-    bool IRequestHandler.OnOpenUrlFromTab(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, string targetUrl, WindowOpenDisposition targetDisposition, bool userGesture)
-    {
-        return false;
-    }
-
-
-    IResourceRequestHandler IRequestHandler.GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
-    {
-        return null;
-    }
-
-
-    bool IRequestHandler.OnCertificateError(IWebBrowser chromiumWebBrowser, IBrowser browser, CefErrorCode errorCode, string requestUrl, ISslInfo sslInfo, IRequestCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    public void OnPluginCrashed(IWebBrowser browserControl, IBrowser browser, string pluginPath)
-    {
-        throw new Exception("Plugin crashed!");
-    }
-
-    public CefReturnValue OnBeforeResourceLoad(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-        IRequestCallback callback)
-    {
-        return CefReturnValue.Continue;
-    }
-
-    bool IRequestHandler.GetAuthCredentials(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, bool isProxy, string host, int port, string realm, string scheme, IAuthCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    bool IRequestHandler.OnSelectClientCertificate(IWebBrowser chromiumWebBrowser, IBrowser browser, bool isProxy, string host, int port, X509Certificate2Collection certificates, ISelectClientCertificateCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    void IRequestHandler.OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status)
-    {
-        throw new Exception("Browser render process is terminated!");
-    }
-
-    public bool OnQuotaRequest(IWebBrowser browserControl, IBrowser browser, string originUrl, long newSize,
-        IRequestCallback callback)
-    {
-        callback.Dispose();
-        return false;
-    }
-
-    public void OnResourceRedirect(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response,
-        ref string newUrl)
-    {
-        var url = newUrl;
-        newUrl = url;
-    }
-
-    public bool OnProtocolExecution(IWebBrowser browserControl, IBrowser browser, string url)
-    {
-        return url.StartsWith("mailto");
-    }
-
-    void IRequestHandler.OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)
-    {
-
-    }
-
-    public bool OnResourceResponse(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request, IResponse response)
-    {
-        return false;
-    }
-
-    public IResponseFilter GetResourceResponseFilter(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-        IResponse response)
-    {
-        return null;
-    }
-
-    public void OnResourceLoadComplete(IWebBrowser browserControl, IBrowser browser, IFrame frame, IRequest request,
-        IResponse response, UrlRequestStatus status, long receivedContentLength)
-    {
-
-    }
-}
-
-internal class MyHandler : CefSharp.WinForms.Handler.LifeSpanHandler
-{
-    protected override bool OnBeforePopup(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, string targetUrl, string targetFrameName, WindowOpenDisposition targetDisposition, bool userGesture, IPopupFeatures popupFeatures, IWindowInfo windowInfo, IBrowserSettings browserSettings, ref bool noJavascriptAccess, out IWebBrowser newBrowser)
-    {
-        newBrowser = null;
-        Process.Start(targetUrl);
-        return true;
-    }
+        Source = new Uri("about:blank"),
+    };
 }

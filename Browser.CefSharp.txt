@@ -29,8 +29,12 @@ internal class Browser: ChromiumWebBrowser
     {
         this.LifeSpanHandler = new MyHandler();
         this.RequestHandler = new MyRequestHandler();
+        //this.Load("about:blank");
     }
-
+    public void Unload()
+    {
+        this.Load("about:blank");
+    }
 }
 
 public class MyRequestHandler : IRequestHandler
