@@ -22,6 +22,9 @@ namespace mdock
         {
             InitializeComponent();
             //
+            this.Text = "MDock 検索";
+            this.Icon = Icon.ExtractAssociatedIcon(System.Reflection.Assembly.GetExecutingAssembly().Location);
+            //
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
@@ -47,6 +50,24 @@ namespace mdock
             {
                 this.StartSearch();
             };
+        }
+        protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
+        {
+            if (keyData == Keys.F3)
+            {
+                //Util.Message("(keyData == Keys.F3)");
+                //Program.form1.Focus();
+                Program.form1.次を検索_Click(null, null);
+                return true;
+            }
+            else if (keyData == (Keys.Shift | Keys.F3))
+            {
+                //Util.Message("(keyData == (Keys.Shift | Keys.F3))");
+                //Program.form1.Focus();
+                Program.form1.前を検索_Click(null, null);
+                return true;
+            }
+            return base.ProcessCmdKey(ref msg, keyData);
         }
         private void StartSearch()
         {

@@ -350,12 +350,12 @@ public partial class Form1 : Form, IRemoteObject
         }
     }
 
-    private void 前を検索_Click(object sender, EventArgs e)
+    public void 前を検索_Click(object sender, EventArgs e)
     {
         this.tabControl1.FindPrev();
     }
 
-    private void 次を検索_Click(object sender, EventArgs e)
+    public void 次を検索_Click(object sender, EventArgs e)
     {
         this.tabControl1.FindNext();
     }

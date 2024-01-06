@@ -101,17 +101,21 @@ internal class MDockTabPage : System.Windows.Forms.TabPage
 
     public void FindPrev()
     {
+        //Util.Message(this.richTextBox1.SelectionStart);
         if (Program.form2.SearchPattern == "") return;
         int idx = this.richTextBox1.Find(Program.form2.SearchPattern, 0, this.richTextBox1.SelectionStart, RichTextBoxFinds.Reverse);
         if (idx == -1) SystemSounds.Beep.Play();
+        else this.richTextBox1.Focus();
     }
     public void FindNext()
     {
+        //Util.Message(this.richTextBox1.SelectionStart);
         if (Program.form2.SearchPattern == "") return;
         try
         {
             int idx = this.richTextBox1.Find(Program.form2.SearchPattern, this.richTextBox1.SelectionStart + 1, RichTextBoxFinds.None);
             if (idx == -1) SystemSounds.Beep.Play();
+            else this.richTextBox1.Focus();
         }
         catch
         {
