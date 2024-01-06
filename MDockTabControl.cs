@@ -115,7 +115,7 @@ internal class MDockTabControl : TabControl
         this.SelectedIndexChanged += (s, e) =>
         {
             var page = (MDockTabPage) this.SelectedTab;
-            page.Render();
+            if (page != null) page.Render();
         };
 
     }

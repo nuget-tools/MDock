@@ -35,13 +35,15 @@
             this.toolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
             this.名前をつけて保存ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.検索ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.前を検索ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.次を検索ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.終了ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tabToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.次を検索ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.前を検索ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.削除ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.名前を変更ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -63,6 +65,8 @@
             this.openToolStripMenuItem,
             this.toolStripMenuItem3,
             this.名前をつけて保存ToolStripMenuItem,
+            this.名前を変更ToolStripMenuItem,
+            this.削除ToolStripMenuItem,
             this.検索ToolStripMenuItem,
             this.前を検索ToolStripMenuItem,
             this.次を検索ToolStripMenuItem,
@@ -110,6 +114,22 @@
             this.検索ToolStripMenuItem.Text = "検索";
             this.検索ToolStripMenuItem.Click += new System.EventHandler(this.検索_Click);
             // 
+            // 前を検索ToolStripMenuItem
+            // 
+            this.前を検索ToolStripMenuItem.Name = "前を検索ToolStripMenuItem";
+            this.前を検索ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
+            this.前を検索ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.前を検索ToolStripMenuItem.Text = "前を検索";
+            this.前を検索ToolStripMenuItem.Click += new System.EventHandler(this.前を検索_Click);
+            // 
+            // 次を検索ToolStripMenuItem
+            // 
+            this.次を検索ToolStripMenuItem.Name = "次を検索ToolStripMenuItem";
+            this.次を検索ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
+            this.次を検索ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.次を検索ToolStripMenuItem.Text = "次を検索";
+            this.次を検索ToolStripMenuItem.Click += new System.EventHandler(this.次を検索_Click);
+            // 
             // 終了ToolStripMenuItem
             // 
             this.終了ToolStripMenuItem.Name = "終了ToolStripMenuItem";
@@ -151,21 +171,22 @@
             this.panel1.Size = new System.Drawing.Size(800, 426);
             this.panel1.TabIndex = 0;
             // 
-            // 次を検索ToolStripMenuItem
+            // 削除ToolStripMenuItem
             // 
-            this.次を検索ToolStripMenuItem.Name = "次を検索ToolStripMenuItem";
-            this.次を検索ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F3;
-            this.次を検索ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.次を検索ToolStripMenuItem.Text = "次を検索";
-            this.次を検索ToolStripMenuItem.Click += new System.EventHandler(this.次を検索_Click);
+            this.削除ToolStripMenuItem.Name = "削除ToolStripMenuItem";
+            this.削除ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)(((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.Shift) 
+            | System.Windows.Forms.Keys.Delete)));
+            this.削除ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.削除ToolStripMenuItem.Text = "削除";
+            this.削除ToolStripMenuItem.Click += new System.EventHandler(this.削除_Click);
             // 
-            // 前を検索ToolStripMenuItem
+            // 名前を変更ToolStripMenuItem
             // 
-            this.前を検索ToolStripMenuItem.Name = "前を検索ToolStripMenuItem";
-            this.前を検索ToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Shift | System.Windows.Forms.Keys.F3)));
-            this.前を検索ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
-            this.前を検索ToolStripMenuItem.Text = "前を検索";
-            this.前を検索ToolStripMenuItem.Click += new System.EventHandler(this.前を検索_Click);
+            this.名前を変更ToolStripMenuItem.Name = "名前を変更ToolStripMenuItem";
+            this.名前を変更ToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F2;
+            this.名前を変更ToolStripMenuItem.Size = new System.Drawing.Size(181, 22);
+            this.名前を変更ToolStripMenuItem.Text = "名前を変更";
+            this.名前を変更ToolStripMenuItem.Click += new System.EventHandler(this.名前を変更_Click);
             // 
             // Form1
             // 
@@ -205,5 +226,7 @@
         private System.Windows.Forms.ToolStripMenuItem 検索ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 前を検索ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 次を検索ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 削除ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 名前を変更ToolStripMenuItem;
     }
 }

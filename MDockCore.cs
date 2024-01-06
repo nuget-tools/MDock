@@ -20,7 +20,10 @@ internal class MDockCore
         set
         {
             this.currentPath = value;
-            Program.form1.Text = $"{Dirs.GetFileName(this.currentPath)} [{Dirs.GetDirectory(this.currentPath)}] - MDock";
+            if (this.currentPath is null)
+                Program.form1.Text = "MDock";
+            else
+                Program.form1.Text = $"{Dirs.GetFileName(this.currentPath)} [{Dirs.GetDirectory(this.currentPath)}] - MDock";
         }
     }
 

@@ -4,6 +4,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
+using Antlr4.Runtime.Tree.Xpath;
 
 namespace mdock;
 
@@ -121,7 +122,8 @@ public partial class Form1 : Form, IRemoteObject
         this.tabControl1.AddMDocText(memo);
         var timer = new System.Threading.Timer((state) =>
         {
-            this.Invoke((MethodInvoker)(() => {
+            this.Invoke((MethodInvoker)(() =>
+            {
                 this.tabControl1.SelectedTab = this.tabControl1.TabPages[this.tabControl1.TabPages.Count - 1];
                 ((MDockTabPage)this.tabControl1.SelectedTab).GotoBottom();
             }));
@@ -137,23 +139,6 @@ public partial class Form1 : Form, IRemoteObject
             MessageBox.Show("ドキュメントを開くか新規作成してください");
             return;
         }
-        var timer = new System.Threading.Timer((state) =>
-        {
-            this.Invoke((MethodInvoker)(() => {
-                if (this.tabControl1.TabPages.Count <= 1) return;
-                var result = MessageBox.Show(
-                    $"「{this.tabControl1.SelectedTab.Text}」を削除しますか？",
-                    "確認",
-                    MessageBoxButtons.YesNo);
-                if (result == DialogResult.Yes)
-                {
-                    //this.tabControl1.TabPages.Remove(this.tabControl1.SelectedTab);
-                    this.tabControl1.Remove(this.tabControl1.SelectedTab);
-                }
-            }));
-            ((System.Threading.Timer)state).Dispose();
-        });
-        timer.Change(TimeSpan.FromMilliseconds(50), TimeSpan.Zero);
     }
 
     //private System.Windows.Forms.TabControl tabControl1;
@@ -161,11 +146,11 @@ public partial class Form1 : Form, IRemoteObject
     private MDockTabPage tabPage1;
     private System.Windows.Forms.TabPage tabPage2;
 
-    private void SaveMemoList()
+    private void SaveMemoList(bool force = false)
     {
         if (Program.Core.CurrentPath is null) return;
         string text = this.tabControl1.DumpText();
-        if (text == Program.Core.CurrentText)
+        if (!force && text == Program.Core.CurrentText)
         {
             //Util.Message("変更されてません");
             return;
@@ -242,7 +227,33 @@ public partial class Form1 : Form, IRemoteObject
         }
         sfd.FileName = initName;
         sfd.Filter = "MDockファイル(*.mdock)|*.mdock";
-        sfd.Title = "保存先のファイルを選択してください";
+        sfd.Title = "保存先のファイルを指定してください";
+        sfd.RestoreDirectory = true;
+        sfd.OverwritePrompt = true;
+        sfd.CheckPathExists = false;
+        if (sfd.ShowDialog() != DialogResult.OK)
+        {
+            return null;
+        }
+        Program.Props.Props.lastDir = Dirs.GetParent(sfd.FileName);
+        return sfd.FileName;
+    }
+    private string? GetRenameFilePath(string path)
+    {
+        SaveFileDialog sfd = new SaveFileDialog();
+        if (Program.Props.Props.lastDir != null)
+        {
+            sfd.InitialDirectory = Program.Props.Props.lastDir;
+        }
+        else
+        {
+            sfd.InitialDirectory = Dirs.DocumentsPath();
+        }
+        long count = 1;
+        string initName = Dirs.GetFileName(path);
+        sfd.FileName = initName;
+        sfd.Filter = "MDockファイル(*.mdock)|*.mdock";
+        sfd.Title = "新しいファイル名を指定してください";
         sfd.RestoreDirectory = true;
         sfd.OverwritePrompt = true;
         sfd.CheckPathExists = false;
@@ -287,6 +298,7 @@ public partial class Form1 : Form, IRemoteObject
         if (path is null) return;
         File.WriteAllText(path, "");
         this.LoadFromPath(path, 0);
+        Program.form2.Visible = false;
     }
     private void ページ削除_Click(object sender, EventArgs e)
     {
@@ -358,6 +370,58 @@ public partial class Form1 : Form, IRemoteObject
     public void 次を検索_Click(object sender, EventArgs e)
     {
         this.tabControl1.FindNext();
+    }
+
+    private void 削除_Click(object sender, EventArgs e)
+    {
+        if (Program.Core.CurrentPath is null) return;
+        var timer = new System.Threading.Timer((state) =>
+        {
+            this.Invoke((MethodInvoker)(() =>
+            {
+                var result = MessageBox.Show(
+                    $"「{Program.Core.CurrentPath}」を削除しますか？",
+                    "確認",
+                    MessageBoxButtons.YesNo);
+                if (result == DialogResult.Yes)
+                {
+                    var list = this.tabControl1.TabPageList();
+                    this.tabControl1.Clear(list);
+                    try
+                    {
+                        File.Delete(Program.Core.CurrentPath);
+                    }
+                    catch
+                    {
+                        ;
+                    }
+                    Program.Core.CurrentPath = null;
+                    this.Text = "MDock";
+                    Program.form2.Visible = false;
+                }
+            }));
+            ((System.Threading.Timer)state).Dispose();
+        });
+        timer.Change(TimeSpan.FromMilliseconds(50), TimeSpan.Zero);
+    }
+
+    private void 名前を変更_Click(object sender, EventArgs e)
+    {
+        if (Program.Core.CurrentPath is null) return;
+        string path = this.GetRenameFilePath(Program.Core.CurrentPath);
+        if (path is null) return;
+        string oldPath = Program.Core.CurrentPath;
+        Program.Core.CurrentPath = path;
+        this.SaveMemoList(true);
+        try
+        {
+            File.Delete(oldPath);
+        }
+        catch
+        {
+            ;
+        }
+        Program.form2.Visible = false;
     }
     //private Form2 form2 = new Form2();
 }
