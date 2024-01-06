@@ -131,6 +131,8 @@ namespace mdock
             this.listBox1.DataSource = this.bs;
             this.bs.ResetBindings(false);
             this.listBox1.SelectedItem = null;
+            this.listBox1.Update();
+            this.Update();
         }
 
         internal class MyListBoxItem
