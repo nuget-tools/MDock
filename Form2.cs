@@ -7,11 +7,21 @@ using System.Windows.Forms;
 
 namespace mdock
 {
+    class MyBackgroundWorker : BackgroundWorker
+    {
+        public long _id = 0;
+        public MyBackgroundWorker(long id)
+        {
+            _id = id;
+        }
+    }
+
     public partial class Form2 : Form
     {
         List<MyListBoxItem> items = null;
         BindingSource bs = null;
-        BackgroundWorker worker;
+        long workerId = 0;
+        MyBackgroundWorker worker;
         string[] list = new string[] { };
         string pattern = null;
         public string SearchPattern
@@ -73,12 +83,14 @@ namespace mdock
         {
             //if (this.textBox1.Text == "") return;
             this.pattern = textBox1.Text;
+#if false
             if (worker != null)
             {
                 if (!worker.CancellationPending) worker.CancelAsync();
                 worker = null;
             }
-            worker = new BackgroundWorker();
+#endif
+            worker = new MyBackgroundWorker(++this.workerId);
             worker.WorkerSupportsCancellation = true;
             worker.DoWork += this.worker_DoWork;
             worker.RunWorkerCompleted += this.workerRunWorkerCompleted;
@@ -127,12 +139,14 @@ namespace mdock
 
         private void workerRunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
+            MyBackgroundWorker worker = (MyBackgroundWorker)sender;
+            if (worker._id != this.workerId) return;
             this.bs.DataSource = this.items;
             this.listBox1.DataSource = this.bs;
             this.bs.ResetBindings(false);
             this.listBox1.SelectedItem = null;
-            this.listBox1.Update();
-            this.Update();
+            //this.listBox1.Update();
+            //this.Update();
         }
 
         internal class MyListBoxItem
