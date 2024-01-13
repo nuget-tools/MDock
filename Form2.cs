@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
+//using System.Web.UI.WebControls;
 using System.Windows.Forms;
 
 namespace mdock
@@ -48,6 +49,7 @@ namespace mdock
             this.listBox1.DataSource = bs;
             //
             this.TopMost = true;
+#if false
             this.listBox1.Click += (s, e) =>
             {
                 if (this.listBox1.SelectedItem != null)
@@ -56,6 +58,30 @@ namespace mdock
                     Program.form1.StartupNextInstance(item.FullPath, item.Position);
                 }
             };
+#else
+            this.listBox1.MouseUp += (s, e) =>
+            {
+                if (e.Button == MouseButtons.Left)
+                {
+                    int index = this.listBox1.IndexFromPoint(e.Location);
+                    if (index != ListBox.NoMatches)
+                    {
+                        var item = (MyListBoxItem)listBox1.Items[index];
+                        Program.form1.StartupNextInstance(item.FullPath, item.Position);
+                    }
+                }
+                else if (e.Button == MouseButtons.Right)
+                {
+                    int index = this.listBox1.IndexFromPoint(e.Location);
+                    if (index != ListBox.NoMatches)
+                    {
+                        var item = (MyListBoxItem)listBox1.Items[index];
+                        Program.form1.StartupNextInstance(item.FullPath, item.Position);
+                        this.Visible = false;
+                    }
+                }
+            };
+#endif
             this.textBox1.TextChanged += (s, e) =>
             {
                 this.StartSearch();

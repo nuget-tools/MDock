@@ -12,6 +12,7 @@ using static System.Net.Mime.MediaTypeNames;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Media;
+using CefSharp;
 
 namespace mdock;
 
