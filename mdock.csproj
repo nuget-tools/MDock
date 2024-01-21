@@ -6,12 +6,16 @@
     <UseWindowsForms>true</UseWindowsForms>
     <Nullable>disable</Nullable>
     <ImplicitUsings>disable</ImplicitUsings>
-    <PlatformTarget>x64</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
-    <Version>24.01.13.0924</Version>
+    <PlatformTarget>anycpu</PlatformTarget>
+    <Prefer32Bit>true</Prefer32Bit>
+    <Version>24.01.21.1236</Version>
   </PropertyGroup>
   <PropertyGroup>
     <DebugType>full</DebugType>
+    <TieredCompilationQuickJit>false</TieredCompilationQuickJit>
+  </PropertyGroup>
+  <PropertyGroup>
+    <CefSharpAnyCpuSupport>true</CefSharpAnyCpuSupport>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>notebook.ico</ApplicationIcon>
