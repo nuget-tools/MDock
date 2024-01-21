@@ -21,6 +21,8 @@ wget --no-check-certificate https://aka.ms/vs/17/release/vc_redist.x86.exe
 dark -x vc_redist.x86.tmp vc_redist.x86.exe
 #cd $cwd/bin/x64/Release/net462/
 cd $cwd/bin/Release/net462/
+cp -rp x86/* .
+rm -rf x86 x64
 #7z x -y $cwd/vc_redist.x64.tmp/AttachedContainer/packages/vcRuntimeMinimum_amd64/cab1.cab
 #for f in *.dll_amd64; do
 #  mv $f ${f%.*}.dll

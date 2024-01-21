@@ -8,7 +8,7 @@
     <ImplicitUsings>disable</ImplicitUsings>
     <PlatformTarget>anycpu</PlatformTarget>
     <Prefer32Bit>true</Prefer32Bit>
-    <Version>24.01.21.1249</Version>
+    <Version>24.01.21.1254</Version>
   </PropertyGroup>
   <PropertyGroup>
     <DebugType>full</DebugType>
