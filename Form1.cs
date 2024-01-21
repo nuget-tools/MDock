@@ -58,8 +58,8 @@ public partial class Form1 : Form, IRemoteObject
                         return;
                     }
                 }
-                path = this.GetOpenFilePath();
-                if (path is null) return;
+                //path = this.GetOpenFilePath();
+                //if (path is null) return;
             }
             else
             {
